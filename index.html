@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图灵小机器人</title>
+	<style>
+		*{margin: 0;padding: 0;}
+		.bigCount{
+			width: 350px;
+			margin: 50px auto 0 auto;
+			border:2px solid rgba(255,68,20,0.5);
+			box-shadow: 2px 3px 5px gray;
+		}
+		.count{
+			height: 600px;
+			padding: 0 5px;
+			box-sizing:border-box;
+			overflow: auto;
+		}
+/*左边*/
+		.Media {
+		  display: flex;
+		  align-items: flex-start;
+		  border: 1px solid #eee;
+		  border-radius: 0 10px 10px 0;
+		  background: #F4F3F0;
+		  margin-top: 35px;
+		}
+
+		.Media-figure {
+			width: 50px;
+			height: 50px;
+		 	margin-right: 5px;
+		}
+
+		.Media-body {
+		  flex: 1;
+		  font-size: 14px;
+		}
+		.Media-title{
+			color: orangered;
+			font-family: 'STCaiyun';
+		}
+		.Media-content{
+			padding: 4px;
+			box-sizing:border-box;
+		}
+/*右边*/
+		.You {
+		  border-radius: 10px 0 0 10px;
+		  background: #E7EAED;
+		}
+
+		.You-body {
+		 	margin-left: 5px;
+		 	
+		}
+		.You-title{
+			color: #4285F4;
+
+			text-align: right;
+			font-family: 'YouYuan';
+		}
+		.You-img{
+			margin-right: 0;
+		}
+		.You-title,.You-content{
+			
+		}
+		.You-content{
+			display: inline-block;
+			font-family: 'STXingkai';
+			font-size: 16px;
+		}
+/*发送消息*/
+	.setMsg{
+		display: flex;
+		width: 350px;
+		height: 40px;
+		margin: auto;
+		margin-top: 15px;
+		border-top: 1px solid #eee;
+	}
+	#value{
+		flex: 0 0 296px;
+	}
+	#btn{
+		flex: 0 0 50px;
+		cursor: pointer;
+	}
+	#value:hover,#btn:hover{
+		border:2px solid #03A9F4;
+	}
+	</style>
+</head>
+<body>
+<div class="bigCount">
+<div class="count">
+<!-- 左边：机器人 -->
+<!-- 	<div class="Media">
+	 	<img class="Media-figure" src="http://file.tuling123.com/upload/image/201809/c5682c4b-bd40-4d80-9cf3-215b6ab2e93b.png" alt="">
+	 	<div class="Media-body">
+	 		<h2 class="Media-title">琳喵喵~~</h2>
+	  		<p class="Media-content"></p>
+	 	</div>
+	</div> -->
+<!-- 右边：你 -->
+<!-- 	<div class="Media You">
+	 	<div class="Media-body You-body">
+	 		<h2 class="Media-title You-title">琳喵喵~~</h2>
+	  		<p class="Media-content You-content">任命罗瑞卿
+	  		</p>
+	 	</div>
+	 	<img class="Media-figure" src="http://file.tuling123.com/upload/image/201809/c5682c4b-bd40-4d80-9cf3-215b6ab2e93b.png" alt="">
+	</div> -->
+</div>
+<div class="setMsg">
+	<input placeholder=" 请输入内容" id="value">
+	<button id="btn">发送</button>
+</div>
+</div>
+</body>
+</html>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+var key='1991ad949b12447aa18fe8c3f476f238'
+var userid='324778'
+var count=$('.count')
+    $('#value').bind('keypress', function(event) {
+        if (event.keyCode == "13") {  
+        	getReturn()
+            event.preventDefault();  
+        }
+    });
+	$('#btn').click(()=>{getReturn()})
+
+	function getReturn(){
+		var val=$('#value').val()
+		var youMsg=`
+				<div class="Media You">
+				 	<div class="Media-body You-body">
+				 		<h2 class="Media-title You-title">Tilin</h2>
+				  		<p class="Media-content You-content">${val}</p>
+				 	</div>
+				 	<img class="Media-figure You-img" src="http://img5.duitang.com/uploads/item/201408/07/20140807111437_HRKRL.thumb.700_0.png" alt="">
+				</div>
+		`
+		count.append(youMsg)
+		
+			$.ajax({
+				url:'http://www.tuling123.com/openapi/api',
+				data:{
+					key:key,
+					userid:userid,
+					info:val // 你对机器人说的话
+				}
+			})
+			.then((res)=>{
+				console.log(res)
+				var returnMsg=res.text
+				var showMsg=`
+					<div class="Media">
+					 	<img class="Media-figure" src="http://b-ssl.duitang.com/uploads/item/201411/05/20141105170927_8cnW3.jpeg" alt="">
+					 	<div class="Media-body">
+					 		<h2 class="Media-title">琳喵喵~~</h2>
+					  		<p class="Media-content">${returnMsg}</p>
+					 	</div>
+					</div>
+				`
+				count.append(showMsg)
+				$('#value').val('')
+				goBottom()
+			},(res)=>{
+				console.log(`错误返回：${res}`)
+				var returnMsg=res.text
+				var showMsg=`
+					<div class="Media">
+					 	<img class="Media-figure" src="http://file.tuling123.com/upload/image/201809/c5682c4b-bd40-4d80-9cf3-215b6ab2e93b.png" alt="">
+					 	<div class="Media-body">
+					 		<h2 class="Media-title">琳喵喵~~</h2>
+					  		<p class="Media-content">${returnMsg}</p>
+					 	</div>
+					</div>
+				`
+				count.append(showMsg)
+				$('#value').val('')
+				goBottom()
+		})
+
+	}
+// 返回底部
+	function goBottom(){
+		console.log($('.count').prop('scrollHeight'))
+	  var botm = $('.count').scrollTop(); 
+	   $('.count').animate({
+            scrollTop: $('.count').prop('scrollHeight')             
+        },700);
+	}
+</script>
